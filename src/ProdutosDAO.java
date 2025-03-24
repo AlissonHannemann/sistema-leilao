@@ -49,6 +49,19 @@ public class ProdutosDAO {
         }
     }
     
+     // Método para vender um produto, atualizando seu status para "Vendido"
+    public boolean venderProduto(int idProduto) {
+        String sql = "UPDATE produtos SET status = 'Vendido' WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProduto);
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0; // Retorna true se a atualização foi bem-sucedida
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     public ArrayList<ProdutosDTO> listarProdutos(){
         ArrayList<ProdutosDTO> listaProdutos = new ArrayList<>();
         
@@ -113,26 +126,5 @@ public class ProdutosDAO {
         return produtosVendidos;
     }
     
-    // Método para vender um produto, atualizando o status para "Vendido"
-    public void venderProduto(int idProduto) {
-        String sql = "UPDATE produtos SET status = ? WHERE id = ?";
-        
-        try (Connection conn = new conectaDAO().connectDB(); 
-             PreparedStatement prep = conn.prepareStatement(sql)) {
-            
-            // Definir os parâmetros da consulta SQL
-            prep.setString(1, "Vendido");  // Atualiza o status para "Vendido"
-            prep.setInt(2, idProduto);  // Define o ID do produto a ser atualizado
-            
-            // Executa a atualização no banco de dados
-            prep.executeUpdate();
-            
-            System.out.println("Produto vendido com sucesso!");
-        } catch (SQLException e) {
-            System.err.println("Erro ao vender produto: " + e.getMessage());
-        }
-    }
-    
-        
+    // Método para vender um produto, atualizando o status para "Vendido"     
 }
-

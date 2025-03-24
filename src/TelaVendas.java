@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -9,7 +11,7 @@ public class TelaVendas extends javax.swing.JFrame {
 
     private JTable table;
     private DefaultTableModel model;
-    
+    private JButton btnVender;
     
     public TelaVendas() {
         // Configurações da tela principal
@@ -29,6 +31,17 @@ public class TelaVendas extends javax.swing.JFrame {
         table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
+        
+        // Criação do botão "Vender"
+        btnVender = new JButton("Vender Produto");
+        add(btnVender, BorderLayout.SOUTH); // Adicionando o botão na parte inferior
+        
+        // Adicionar o ActionListener para o botão
+        btnVender.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                venderProduto();
+            }
+        });
 
         // Carregar os produtos vendidos
         carregarProdutosVendidos();
@@ -38,6 +51,9 @@ public class TelaVendas extends javax.swing.JFrame {
     private void carregarProdutosVendidos() {
         ProdutosDAO produtosDAO = new ProdutosDAO();
         ArrayList<ProdutosDTO> produtosVendidos = produtosDAO.listarProdutosVendidos();
+        
+        // Limpar a tabela antes de carregar os dados
+        model.setRowCount(0);
 
         // Adicionando os produtos à tabela
         for (ProdutosDTO produto : produtosVendidos) {
@@ -47,6 +63,29 @@ public class TelaVendas extends javax.swing.JFrame {
                 produto.getValor(),
                 produto.getStatus()
             });
+        }
+    }
+    
+    // Método que executa a venda do produto
+    private void venderProduto() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow >= 0) {
+            // Obter o ID do produto da linha selecionada
+            int idProduto = (int) model.getValueAt(selectedRow, 0);
+
+            // Criar uma instância de ProdutosDAO para atualizar o status
+            ProdutosDAO produtosDAO = new ProdutosDAO();
+            boolean sucesso = produtosDAO.venderProduto(idProduto);
+
+            if (sucesso) {
+                JOptionPane.showMessageDialog(this, "Produto vendido com sucesso!");
+                // Atualizar a tabela para refletir a mudança
+                carregarProdutosVendidos();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao vender o produto.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um produto para vender.");
         }
     }
 
