@@ -30,7 +30,7 @@ public class ProdutosDAO {
         try {
             prep = conn.prepareStatement(sql);
             prep.setString(1, produto.getNome()); 
-            prep.setInt(2, produto.getValor());   
+            prep.setDouble(2, produto.getValor());   
             prep.setString(3, produto.getStatus()); 
 
             prep.executeUpdate(); // Executa o comando de inserção
@@ -49,8 +49,41 @@ public class ProdutosDAO {
     }
     
     public ArrayList<ProdutosDTO> listarProdutos(){
+        ArrayList<ProdutosDTO> listaProdutos = new ArrayList<>();
         
-        return listagem;
+        // Conectando ao banco de dados
+        Connection conn = new conectaDAO().connectDB();
+        
+        String sql = "SELECT * FROM produtos"; // A consulta para listar todos os produtos
+        
+        try {
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery(); // Executa a consulta
+            
+            // Enquanto houver produtos na tabela, ele os adiciona à lista
+            while (rs.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+                
+                // Preenche o DTO com os dados do sproduto
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getDouble("valor"));
+                produto.setStatus(rs.getString("status"));
+                
+                // Adiciona o produto à lista
+                listaProdutos.add(produto);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Caso haja erro, imprime a mensagem
+        } finally {
+            try {
+                conn.close(); // Fecha a conexão
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return listaProdutos; // Retorna a lista de produtos
     }
     
     
