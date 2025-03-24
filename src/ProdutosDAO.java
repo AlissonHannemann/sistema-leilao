@@ -87,6 +87,32 @@ public class ProdutosDAO {
         return listaProdutos; // Retorna a lista de produtos
     }
     
+    // Método para listar produtos vendidos
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() {
+        ArrayList<ProdutosDTO> produtosVendidos = new ArrayList<>();
+        
+        String sql = "SELECT * FROM produtos WHERE status = 'Vendido'";  // Query para buscar produtos vendidos
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getDouble("valor"));
+                produto.setStatus(rs.getString("status"));
+                
+                // Adiciona o produto à lista
+                produtosVendidos.add(produto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return produtosVendidos;
+    }
+    
     // Método para vender um produto, atualizando o status para "Vendido"
     public void venderProduto(int idProduto) {
         String sql = "UPDATE produtos SET status = ? WHERE id = ?";
