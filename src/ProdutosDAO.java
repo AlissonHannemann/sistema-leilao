@@ -13,6 +13,7 @@ import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.sql.SQLException;
 
 
 public class ProdutosDAO {
@@ -86,7 +87,25 @@ public class ProdutosDAO {
         return listaProdutos; // Retorna a lista de produtos
     }
     
-    
+    // Método para vender um produto, atualizando o status para "Vendido"
+    public void venderProduto(int idProduto) {
+        String sql = "UPDATE produtos SET status = ? WHERE id = ?";
+        
+        try (Connection conn = new conectaDAO().connectDB(); 
+             PreparedStatement prep = conn.prepareStatement(sql)) {
+            
+            // Definir os parâmetros da consulta SQL
+            prep.setString(1, "Vendido");  // Atualiza o status para "Vendido"
+            prep.setInt(2, idProduto);  // Define o ID do produto a ser atualizado
+            
+            // Executa a atualização no banco de dados
+            prep.executeUpdate();
+            
+            System.out.println("Produto vendido com sucesso!");
+        } catch (SQLException e) {
+            System.err.println("Erro ao vender produto: " + e.getMessage());
+        }
+    }
     
         
 }

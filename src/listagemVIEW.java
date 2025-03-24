@@ -140,6 +140,8 @@ public class listagemVIEW extends javax.swing.JFrame {
         
         ProdutosDAO produtosdao = new ProdutosDAO();
         
+        // Converte o ID para inteiro e chama o método para vender o produto
+        produtosdao.venderProduto(Integer.parseInt(id));
         //produtosdao.venderProduto(Integer.parseInt(id));
         listarProdutos();
     }//GEN-LAST:event_btnVenderActionPerformed
