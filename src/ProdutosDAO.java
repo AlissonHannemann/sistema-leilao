@@ -13,6 +13,7 @@ import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.sql.SQLException;
 
 
 public class ProdutosDAO {
@@ -45,6 +46,19 @@ public class ProdutosDAO {
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Erro ao fechar conexão: " + e.getMessage());
             }
+        }
+    }
+    
+     // Método para vender um produto, atualizando seu status para "Vendido"
+    public boolean venderProduto(int idProduto) {
+        String sql = "UPDATE produtos SET status = 'Vendido' WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProduto);
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0; // Retorna true se a atualização foi bem-sucedida
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
     
@@ -86,8 +100,31 @@ public class ProdutosDAO {
         return listaProdutos; // Retorna a lista de produtos
     }
     
-    
-    
+    // Método para listar produtos vendidos
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() {
+        ArrayList<ProdutosDTO> produtosVendidos = new ArrayList<>();
         
-}
+        String sql = "SELECT * FROM produtos WHERE status = 'Vendido'";  // Query para buscar produtos vendidos
 
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getDouble("valor"));
+                produto.setStatus(rs.getString("status"));
+                
+                // Adiciona o produto à lista
+                produtosVendidos.add(produto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return produtosVendidos;
+    }
+    
+    // Método para vender um produto, atualizando o status para "Vendido"     
+}

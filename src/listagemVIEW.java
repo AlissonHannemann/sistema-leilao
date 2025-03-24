@@ -140,13 +140,19 @@ public class listagemVIEW extends javax.swing.JFrame {
         
         ProdutosDAO produtosdao = new ProdutosDAO();
         
+        // Converte o ID para inteiro e chama o método para vender o produto
+        produtosdao.venderProduto(Integer.parseInt(id));
         //produtosdao.venderProduto(Integer.parseInt(id));
         listarProdutos();
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-        //vendasVIEW vendas = new vendasVIEW(); 
-        //vendas.setVisible(true);
+
+                // Quando clicado, abre a TelaVendas
+                new TelaVendas().setVisible(true);
+                // Fecha a TelaPrincipal (se necessário)
+                dispose();
+        
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
